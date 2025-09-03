@@ -299,3 +299,67 @@ input:valid {
   block-size: 18px;
   accent-color: var(--accent);
 }
+
+/* --- Modern CSS Progressive Enhancements --- */
+
+/* 1) Subtle animated background (respects reduced-motion) */
+@keyframes floatBackdrop {
+  0% { background-position: 10% 0%, 100% 0%, 0 0; }
+  50% { background-position: 8% 2%, 98% 1%, 0 0; }
+  100% { background-position: 10% 0%, 100% 0%, 0 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body { animation: floatBackdrop 18s ease-in-out infinite; }
+}
+
+/* 2) Card glassmorphism on capable browsers (keeps solid fallback) */
+@supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+  .card {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(10px) saturate(1.1);
+    -webkit-backdrop-filter: blur(10px) saturate(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+  }
+}
+
+/* 3) Container queries: make the form two-column on wider cards */
+.card { container-type: inline-size; }
+
+@container (min-width: 620px) {
+  .form {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    row-gap: 18px;
+  }
+  .form > .field--checkbox,
+  .form > .btn,
+  .form > .fine-print { grid-column: 1 / -1; }
+}
+
+/* 4) :has() validation highlight (progressive) */
+@supports selector(:has(*)) {
+  .field:has(input:invalid) .label { color: #b45309; }
+  .field:has(input:invalid) input { border-color: rgba(255, 129, 129, 0.9); box-shadow: 0 0 0 4px rgba(255, 129, 129, 0.18); }
+  .field:has(input:valid) .label { color: var(--muted); }
+}
+
+/* 5) Buttons: animated sheen on hover (respect motion) */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -120%;
+  width: 120%; height: 100%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 30%, transparent 60%);
+  transform: skewX(-20deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn:hover::before { left: 100%; transition: left 700ms ease; }
+}
+
+/* 6) Raffle list markers polish */
+.raffle__results li::marker { color: var(--accent); }
