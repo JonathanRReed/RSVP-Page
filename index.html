@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Try Noko IRL — RSVP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card" aria-labelledby="event-title">
+        <header class="card__header">
+          <div class="brand">
+            <div class="brand__logo" aria-hidden="true">noko</div>
+          </div>
+          <h1 id="event-title" class="title">Try Noko IRL</h1>
+          <p class="subtitle">A sparkling tasting event. Come sip our newest flavors and hang with the team. Limited spots — RSVP below.</p>
+        </header>
+
+        <form class="form" action="#thanks" method="get" autocomplete="on" novalidate>
+          <div class="field">
+            <label for="name" class="label">Name <span class="required-asterisk" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+            <input id="name" name="name" type="text" inputmode="text" placeholder="Your full name" autocomplete="name" required />
+          </div>
+
+          <div class="field">
+            <label for="email" class="label">Email <span class="required-asterisk" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+            <input id="email" name="email" type="email" inputmode="email" placeholder="you@example.com" autocomplete="email" aria-describedby="email-hint" required />
+            <p id="email-hint" class="help">We’ll send your confirmation to this address.</p>
+          </div>
+
+          <div class="field field--checkbox">
+            <input id="consent" name="consent" type="checkbox" required />
+            <label for="consent" class="checkbox-label">I agree to receive event emails about this RSVP <span class="required-asterisk" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+          </div>
+
+          <button class="btn" type="submit" aria-label="RSVP to Try Noko IRL">RSVP</button>
+        </form>
+
+        <p class="fine-print">By RSVPing you agree to receive a confirmation email. We’ll never share your info.</p>
+      </section>
+    </main>
+    
+    <!-- CSS-only confirmation modal shown when URL hash is #thanks -->
+    <div id="thanks" class="modal" role="dialog" aria-modal="true" aria-labelledby="thanks-title">
+      <div class="modal__content">
+        <h2 id="thanks-title">You're on the list!</h2>
+        <p>Thanks for RSVPing to Try Noko IRL. Check your email soon for details and updates.</p>
+        <a href="#" class="btn btn--ghost" role="button" aria-label="Close confirmation">Close</a>
+      </div>
+    </div>
+  </body>
+</html>

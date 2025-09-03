@@ -1,0 +1,203 @@
+/* Styles for Try Noko IRL landing page */
+:root {
+  --bg: #0e0f12;
+  --card: #12151a;
+  --text: #e8eaed;
+  --muted: #a2a7b0;
+  --accent: #7fe0c3; /* minty sparkle */
+  --accent-2: #7fcfe0;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+  background: radial-gradient(1000px 600px at 10% 10%, rgba(127, 224, 195, 0.08), transparent 60%),
+              radial-gradient(800px 500px at 90% 0%, rgba(127, 207, 224, 0.08), transparent 60%),
+              var(--bg);
+  color: var(--text);
+}
+
+.page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 48px 16px;
+}
+
+.card {
+  width: 100%;
+  max-width: 720px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.0)) padding-box,
+              linear-gradient(180deg, rgba(127, 224, 195, 0.6), rgba(127, 207, 224, 0.25)) border-box,
+              var(--card);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+.card__header { margin-bottom: 24px; }
+
+.brand { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.brand__logo {
+  background: var(--accent);
+  color: #0b0e0f;
+  font-weight: 800;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.form { display: grid; gap: 16px; margin-top: 18px; }
+
+.field { display: grid; gap: 6px; }
+.label { color: var(--muted); font-size: 0.95rem; }
+.help { margin: -2px 0 0; color: var(--muted); font-size: 0.9rem; }
+.required-asterisk { color: var(--accent); }
+
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 14px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+input::placeholder { color: #98a0aa; }
+
+input:focus {
+  border-color: rgba(127, 224, 195, 0.7);
+  box-shadow: 0 0 0 4px rgba(127, 224, 195, 0.18);
+  background: rgba(255,255,255,0.06);
+}
+
+/* Native validation feedback */
+input:invalid {
+  border-color: rgba(255, 102, 102, 0.8);
+  box-shadow: 0 0 0 4px rgba(255, 102, 102, 0.18);
+}
+
+input:valid {
+  border-color: rgba(127, 224, 195, 0.7);
+}
+
+.btn {
+  margin-top: 4px;
+  appearance: none;
+  border: 0;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #0b0e0f;
+  cursor: pointer;
+  transition: transform 0.06s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 18px rgba(127, 224, 195, 0.25);
+}
+
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(127, 224, 195, 0.28);
+}
+
+.fine-print {
+  margin: 14px 4px 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+@media (min-width: 760px) {
+  .card { padding: 40px; }
+}
+
+/* Modal (CSS-only via :target) */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none; /* hidden by default */
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 16px;
+  z-index: 1000;
+}
+
+.modal:target { display: grid; }
+
+.modal__content {
+  width: min(92vw, 560px);
+  background: var(--card);
+  color: var(--text);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+.modal__content h2 { margin: 0 0 8px; }
+.modal__content p { margin: 0 0 16px; color: var(--muted); }
+
+/* Ghost button variant */
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: none;
+}
+
+.btn--ghost:hover { filter: none; background: rgba(255,255,255,0.06); }
+
+/* Checkbox field */
+.field--checkbox {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: start;
+  gap: 10px;
+}
+
+.field--checkbox input[type="checkbox"] {
+  inline-size: 18px;
+  block-size: 18px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.checkbox-label { color: var(--muted); }
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
