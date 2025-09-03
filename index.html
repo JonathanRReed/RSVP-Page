@@ -3,7 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Try Noko IRL — RSVP</title>
+    <title>Try Noko IRL — RSVP + Treat Yourself to a Noko</title>
+    <meta name="description" content="RSVP for Try Noko IRL and unlock a playful Noko Surprise. Draw raffle winners, celebrate with confetti, and sip sparkling vibes." />
+    <meta property="og:title" content="Try Noko IRL — RSVP + Noko Surprise" />
+    <meta property="og:description" content="Unlock a random Noko-themed surprise and draw raffle winners with confetti." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://example.com/og-noko.jpg" />
+    <meta property="og:url" content="https://example.com/try-noko-irl" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Try Noko IRL — RSVP + Noko Surprise" />
+    <meta name="twitter:description" content="Unlock a random Noko-themed surprise and draw raffle winners with confetti." />
+    <meta name="twitter:image" content="https://example.com/og-noko.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -61,7 +71,7 @@
         <button id="nokoSurpriseBtn" class="btn btn--surprise" type="button" aria-describedby="campaign-title" aria-controls="reward" aria-expanded="false">
           Get my Noko Surprise ✨
         </button>
-        <div id="announce" class="sr-only" aria-live="polite"></div>
+        <div id="announce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
         <div id="reward" class="reward" hidden>
           <div class="reward__card" tabindex="-1">
@@ -69,6 +79,7 @@
             <h3 class="reward__title">You unlocked a surprise!</h3>
             <p class="reward__text">Mixing your sparkle…</p>
             <a class="btn btn--ghost reward__cta" href="#" hidden>Learn more</a>
+            <button id="rewardShareBtn" class="btn btn--ghost" type="button">Copy & Share</button>
           </div>
         </div>
 
@@ -86,17 +97,24 @@
     <section class="raffle" aria-labelledby="raffle-title">
       <div class="campaign__inner">
         <h2 id="raffle-title" class="campaign__title">Raffle Drawer <span aria-hidden="true">🎟️</span></h2>
-        <p class="campaign__subtitle">Paste a few names (one per line), then draw winners.</p>
+        <p class="campaign__subtitle">Paste a few names (one per line), choose how many winners, then draw.</p>
+        <div class="raffle__controls">
+          <label for="drawCount" class="label">Winners</label>
+          <input id="drawCount" type="number" min="1" inputmode="numeric" class="raffle__count" placeholder="Auto" aria-describedby="drawCountHelp" />
+          <span id="drawCountHelp" class="help">Leave blank to auto‑select up to the number of unique rewards.</span>
+        </div>
         <textarea id="namesInput" class="raffle__input" rows="6" placeholder="e.g.\nAlex\nJordan\nRiley\nSam"></textarea>
         <div class="raffle__actions">
           <button id="drawBtn" class="btn" type="button">Draw Winners 🎟️</button>
           <button id="resetBtn" class="btn btn--ghost" type="button">Reset 🔄</button>
+          <button id="copyResultsBtn" class="btn btn--ghost" type="button">Copy Results</button>
+          <button id="downloadCsvBtn" class="btn btn--ghost" type="button">Download CSV</button>
         </div>
         <div id="raffleResults" class="raffle__results" tabindex="-1" aria-live="polite"></div>
       </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="main.js" defer></script>
   </body>
 </html>

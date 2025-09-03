@@ -12,6 +12,7 @@
   const announce = document.getElementById('announce');
   const tryAgainEl = document.getElementById('tryAgainToggle');
   const resetSurpriseBtn = document.getElementById('resetSurpriseBtn');
+  const rewardShareBtn = document.getElementById('rewardShareBtn');
 
   if (!btn || !rewardWrap || !rewardCard) return;
 
@@ -35,6 +36,7 @@
   };
 
   const SESSION_KEY = 'noko-surprise-claimed';
+  const TRY_AGAIN_KEY = 'noko-try-again';
 
   const shootConfetti = () => {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -63,6 +65,9 @@
     if (announce) announce.textContent = `${r.title} — ${r.text}`;
     requestAnimationFrame(() => rewardCard.focus());
     shootConfetti();
+
+    // Analytics placeholder
+    try { console.log('[analytics] reward_revealed', { id: r.id, title: r.title }); } catch {}
   };
 
   const handleClick = () => {
@@ -101,6 +106,35 @@
     }
   });
 
+  // Persist Try Again toggle (initialize and save)
+  if (tryAgainEl) {
+    const saved = localStorage.getItem(TRY_AGAIN_KEY);
+    if (saved !== null) tryAgainEl.checked = saved === '1';
+    tryAgainEl.addEventListener('change', () => {
+      localStorage.setItem(TRY_AGAIN_KEY, tryAgainEl.checked ? '1' : '0');
+    });
+  }
+
+  // Share reward copy
+  rewardShareBtn?.addEventListener('click', async () => {
+    const text = `I just unlocked a Noko Surprise: ${rewardTitle.textContent} ${rewardEmoji.textContent} — ${rewardText.textContent}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      if (announce) announce.textContent = 'Copied reward to clipboard!';
+    } catch {
+      alert(text);
+    }
+  });
+
+  // Reset Surprise: clears session and hides card
+  resetSurpriseBtn?.addEventListener('click', () => {
+    sessionStorage.removeItem(SESSION_KEY);
+    rewardWrap.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+    if (announce) announce.textContent = '';
+    btn.focus();
+  });
+
   // ----------------------
   // Raffle Drawer
   // ----------------------
@@ -108,6 +142,9 @@
   const drawBtn = document.getElementById('drawBtn');
   const resetBtn = document.getElementById('resetBtn');
   const resultsEl = document.getElementById('raffleResults');
+  const copyResultsBtn = document.getElementById('copyResultsBtn');
+  const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+  const drawCountEl = document.getElementById('drawCount');
 
   const pickWeighted = () => weightedPick();
   const pickUniform = () => rewards[Math.floor(Math.random() * rewards.length)];
@@ -122,6 +159,12 @@
       resultsEl.focus();
       return;
     }
+    // Determine number of winners
+    const maxUniqueRewards = rewards.length;
+    let desired = parseInt(drawCountEl?.value || '', 10);
+    if (!Number.isFinite(desired) || desired <= 0) desired = Math.min(unique.length, maxUniqueRewards);
+    desired = Math.min(desired, unique.length);
+
     drawBtn.disabled = true; resetBtn.disabled = true;
     const original = drawBtn.textContent; drawBtn.textContent = 'Drawing…';
 
@@ -130,7 +173,7 @@
       const usedRewardIds = new Set();
 
       // First pass with weights, ensure no duplicate rewards until we run out
-      for (const name of unique) {
+      for (const name of unique.slice(0, desired)) {
         let r = pickWeighted();
         let safety = 0;
         while (usedRewardIds.has(r.id) && safety++ < 20) r = pickWeighted();
@@ -144,24 +187,23 @@
 
       // Render results
       resultsEl.innerHTML = '';
-      const frag = document.createDocumentFragment();
+      const list = document.createElement('ul');
+      list.setAttribute('role', 'list');
       winners.forEach((w, i) => {
-        const row = document.createElement('div');
+        const li = document.createElement('li');
+        li.textContent = `${w.name} → ${w.reward.title} ${w.reward.emoji}`;
         if (!prefersReduced) {
-          row.style.opacity = '0';
-          row.style.transform = 'translateY(6px)';
-        }
-        row.textContent = `${w.name} → ${w.reward.title} ${w.reward.emoji}`;
-        frag.appendChild(row);
-        if (!prefersReduced) {
+          li.style.opacity = '0';
+          li.style.transform = 'translateY(6px)';
           setTimeout(() => {
-            row.style.transition = 'opacity 220ms ease, transform 220ms ease';
-            row.style.opacity = '1';
-            row.style.transform = 'translateY(0)';
+            li.style.transition = 'opacity 220ms ease, transform 220ms ease';
+            li.style.opacity = '1';
+            li.style.transform = 'translateY(0)';
           }, 60 * i);
         }
+        list.appendChild(li);
       });
-      resultsEl.appendChild(frag);
+      resultsEl.appendChild(list);
 
       // Focus and celebrate
       resultsEl.focus();
@@ -169,6 +211,9 @@
 
       drawBtn.textContent = original;
       drawBtn.disabled = false; resetBtn.disabled = false;
+
+      // Analytics placeholder
+      try { console.log('[analytics] raffle_drawn', { count: winners.length }); } catch {}
     }, 700);
   }
 
@@ -177,5 +222,29 @@
     namesInput.value = '';
     resultsEl.innerHTML = '';
     namesInput.focus();
+  });
+
+  // Copy results
+  copyResultsBtn?.addEventListener('click', async () => {
+    const text = Array.from(resultsEl.querySelectorAll('li')).map(li => li.textContent).join('\n');
+    if (!text) return;
+    try { await navigator.clipboard.writeText(text); if (announce) announce.textContent = 'Results copied!'; } catch {}
+  });
+
+  // Download CSV
+  downloadCsvBtn?.addEventListener('click', () => {
+    const rows = [['Name', 'Reward']];
+    resultsEl.querySelectorAll('li').forEach(li => {
+      const parts = (li.textContent || '').split('→');
+      if (parts.length === 2) rows.push([parts[0].trim(), parts[1].trim()]);
+    });
+    if (rows.length === 1) return;
+    const csv = rows.map(r => r.map(v => '"' + v.replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'noko_raffle_results.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
   });
 })();

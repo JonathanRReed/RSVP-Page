@@ -252,6 +252,16 @@ input:valid {
 /* Raffle styles */
 .raffle { padding: 0 20px 120px; }
 .raffle .campaign__inner { text-align: left; }
+.raffle__controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 10px; }
+.raffle__count {
+  width: 120px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(31, 41, 55, 0.12);
+  background: #fff;
+  color: var(--heading);
+  box-shadow: 0 4px 10px rgba(31, 41, 55, 0.05);
+}
 .raffle__input {
   width: 100%;
   min-height: 140px;
@@ -264,6 +274,8 @@ input:valid {
 }
 .raffle__actions { display: flex; gap: 12px; margin-top: 12px; }
 .raffle__results { margin-top: 16px; padding: 16px; background: var(--card); border: 1px solid rgba(31, 41, 55, 0.12); border-radius: 14px; min-height: 40px; }
+.raffle__results ul { margin: 0; padding-left: 1.2rem; }
+.raffle__results li { padding: 4px 0; color: var(--text); }
 
 /* Campaign settings */
 .campaign__settings {
