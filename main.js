@@ -13,6 +13,9 @@
   const tryAgainEl = document.getElementById('tryAgainToggle');
   const resetSurpriseBtn = document.getElementById('resetSurpriseBtn');
   const rewardShareBtn = document.getElementById('rewardShareBtn');
+  const themeToggle = document.getElementById('themeToggle');
+  const sharePageBtn = document.getElementById('sharePageBtn');
+  const progressBar = document.getElementById('scrollProgress');
 
   if (!btn || !rewardWrap || !rewardCard) return;
 
@@ -37,11 +40,12 @@
 
   const SESSION_KEY = 'noko-surprise-claimed';
   const TRY_AGAIN_KEY = 'noko-try-again';
+  const THEME_KEY = 'noko-theme';
 
-  const shootConfetti = () => {
+  const shootConfetti = (colorsOverride) => {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (typeof confetti !== 'function') return;
-    const colors = ['#87E2C7', '#FFCDB7', '#fff3e8', '#e6fff6'];
+    const colors = colorsOverride || ['#87E2C7', '#FFCDB7', '#fff3e8', '#e6fff6'];
     confetti({ particleCount: 60, spread: 65, origin: { y: 0.6 }, colors });
     setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.2, y: 0.4 }, colors }), 120);
     setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.8, y: 0.4 }, colors }), 200);
@@ -64,7 +68,15 @@
     // Announce and focus
     if (announce) announce.textContent = `${r.title} — ${r.text}`;
     requestAnimationFrame(() => rewardCard.focus());
-    shootConfetti();
+    // color map by reward
+    const colorMap = {
+      sample: ['#87E2C7', '#6AD6BA', '#e6fff6'],
+      early: ['#8fb5ff', '#b3ccff', '#e8f0ff'],
+      merch: ['#FFCDB7', '#ffb199', '#fff3e8'],
+      match: ['#FFCDB7', '#FFDCCB', '#ffeade'],
+      perk: ['#87E2C7', '#FFCDB7', '#fff3e8']
+    };
+    shootConfetti(colorMap[r.id] || undefined);
 
     // Analytics placeholder
     try { console.log('[analytics] reward_revealed', { id: r.id, title: r.title }); } catch {}
@@ -105,6 +117,56 @@
       handleClick();
     }
   });
+
+  // ----------------------
+  // Theme toggle + persistence
+  // ----------------------
+  function applyTheme(theme) {
+    const root = document.documentElement;
+    if (theme === 'darkmint') {
+      root.setAttribute('data-theme', 'darkmint');
+      if (themeToggle) { themeToggle.setAttribute('aria-pressed', 'true'); themeToggle.textContent = 'Light ☀️'; }
+    } else {
+      root.removeAttribute('data-theme');
+      if (themeToggle) { themeToggle.setAttribute('aria-pressed', 'false'); themeToggle.textContent = 'Dark Mint 🌙'; }
+    }
+  }
+  const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
+  applyTheme(savedTheme);
+  themeToggle?.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') === 'darkmint' ? 'darkmint' : 'light';
+    const next = current === 'darkmint' ? 'light' : 'darkmint';
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+  });
+
+  // ----------------------
+  // Share Page
+  // ----------------------
+  sharePageBtn?.addEventListener('click', async () => {
+    const shareData = { title: document.title, text: 'Join me at Try Noko IRL ✨', url: location.href };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(`${shareData.title}\n${shareData.url}`);
+        if (announce) announce.textContent = 'Link copied to clipboard!';
+      }
+    } catch {}
+  });
+
+  // ----------------------
+  // Scroll progress
+  // ----------------------
+  function updateScrollProgress() {
+    if (!progressBar) return;
+    const scrollH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = Math.max(0, Math.min(1, (window.scrollY || document.documentElement.scrollTop) / (scrollH || 1)));
+    progressBar.style.width = (scrolled * 100).toFixed(1) + '%';
+  }
+  updateScrollProgress();
+  window.addEventListener('scroll', updateScrollProgress, { passive: true });
+  window.addEventListener('resize', updateScrollProgress);
 
   // Persist Try Again toggle (initialize and save)
   if (tryAgainEl) {

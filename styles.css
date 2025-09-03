@@ -14,6 +14,18 @@
   --shadow: 0 12px 28px rgba(31, 41, 55, 0.08);
 }
 
+/* Dark Mint theme */
+[data-theme="darkmint"] {
+  --bg: #0E1514;
+  --card: #0f1b1a;
+  --text: #a7b0b0;
+  --heading: #ebf4f2;
+  --muted: #8aa09e;
+  --accent: #6AD6BA;
+  --accent-2: #FFBDA6;
+  --shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
 * { box-sizing: border-box; }
 
 html, body { height: 100%; }
@@ -29,6 +41,14 @@ body {
   position: relative;
   overflow-x: clip;
 }
+
+/* Top progress bar */
+.progress { position: fixed; inset: 0 0 auto 0; height: 4px; background: transparent; z-index: 999; }
+.progress__bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 0 12px rgba(0,0,0,0.06) inset; }
+
+/* Floating utility bar */
+.util { position: fixed; top: 14px; right: 14px; display: flex; gap: 8px; z-index: 998; }
+.util__btn { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-color: rgba(255,255,255,0.2); }
 
 .page {
   min-height: 100dvh;
