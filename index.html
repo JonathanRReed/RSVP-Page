@@ -58,7 +58,7 @@
       <div class="campaign__inner">
         <h2 id="campaign-title" class="campaign__title">Noko Surprise <span aria-hidden="true">🎁</span></h2>
         <p class="campaign__subtitle">Click once to get a light, fun reward. One surprise per session.</p>
-        <button id="nokoSurpriseBtn" class="btn btn--surprise" type="button" aria-controls="reward" aria-expanded="false">
+        <button id="nokoSurpriseBtn" class="btn btn--surprise" type="button" aria-describedby="campaign-title" aria-controls="reward" aria-expanded="false">
           Get my Noko Surprise ✨
         </button>
         <div id="announce" class="sr-only" aria-live="polite"></div>
@@ -70,6 +70,14 @@
             <p class="reward__text">Mixing your sparkle…</p>
             <a class="btn btn--ghost reward__cta" href="#" hidden>Learn more</a>
           </div>
+        </div>
+
+        <div class="campaign__settings" aria-label="Surprise options">
+          <label class="toggle">
+            <input id="tryAgainToggle" type="checkbox" />
+            <span>Allow Try Again</span>
+          </label>
+          <button id="resetSurpriseBtn" class="btn btn--ghost" type="button">Reset Surprise</button>
         </div>
       </div>
     </section>

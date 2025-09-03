@@ -264,3 +264,26 @@ input:valid {
 }
 .raffle__actions { display: flex; gap: 12px; margin-top: 12px; }
 .raffle__results { margin-top: 16px; padding: 16px; background: var(--card); border: 1px solid rgba(31, 41, 55, 0.12); border-radius: 14px; min-height: 40px; }
+
+/* Campaign settings */
+.campaign__settings {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.toggle input[type="checkbox"] {
+  inline-size: 18px;
+  block-size: 18px;
+  accent-color: var(--accent);
+}

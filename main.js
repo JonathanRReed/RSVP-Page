@@ -10,6 +10,8 @@
   const rewardText = rewardWrap?.querySelector('.reward__text');
   const rewardCta = rewardWrap?.querySelector('.reward__cta');
   const announce = document.getElementById('announce');
+  const tryAgainEl = document.getElementById('tryAgainToggle');
+  const resetSurpriseBtn = document.getElementById('resetSurpriseBtn');
 
   if (!btn || !rewardWrap || !rewardCard) return;
 
@@ -67,7 +69,8 @@
     if (btn.disabled) return;
 
     // Optional: one per session
-    if (sessionStorage.getItem(SESSION_KEY)) {
+    const allowTryAgain = !!tryAgainEl?.checked;
+    if (!allowTryAgain && sessionStorage.getItem(SESSION_KEY)) {
       reveal({
         emoji: '✨',
         title: 'Already Claimed',
@@ -83,7 +86,7 @@
     // Anticipation delay 600ms
     setTimeout(() => {
       const reward = weightedPick();
-      sessionStorage.setItem(SESSION_KEY, '1');
+      if (!allowTryAgain) sessionStorage.setItem(SESSION_KEY, '1');
       reveal(reward);
       btn.textContent = original;
       btn.disabled = false;
@@ -108,6 +111,8 @@
 
   const pickWeighted = () => weightedPick();
   const pickUniform = () => rewards[Math.floor(Math.random() * rewards.length)];
+
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function drawWinners() {
     const raw = (namesInput?.value || '').split('\n').map(s => s.trim()).filter(Boolean);
@@ -142,15 +147,19 @@
       const frag = document.createDocumentFragment();
       winners.forEach((w, i) => {
         const row = document.createElement('div');
-        row.style.opacity = '0';
-        row.style.transform = 'translateY(6px)';
+        if (!prefersReduced) {
+          row.style.opacity = '0';
+          row.style.transform = 'translateY(6px)';
+        }
         row.textContent = `${w.name} → ${w.reward.title} ${w.reward.emoji}`;
         frag.appendChild(row);
-        setTimeout(() => {
-          row.style.transition = 'opacity 220ms ease, transform 220ms ease';
-          row.style.opacity = '1';
-          row.style.transform = 'translateY(0)';
-        }, 60 * i);
+        if (!prefersReduced) {
+          setTimeout(() => {
+            row.style.transition = 'opacity 220ms ease, transform 220ms ease';
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+          }, 60 * i);
+        }
       });
       resultsEl.appendChild(frag);
 

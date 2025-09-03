@@ -22,9 +22,9 @@ A playful, accessible promo page for Noko’s tasting event. Includes a semantic
 
 - Replace the logo text inside `.brand__logo` in `index.html`.
 - Adjust theme colors in `styles.css` under the `:root` variables.
- - Tweak reward weights/copy in `main.js` under the `rewards` array.
- - Replace placeholder CTA URLs (e.g., perks) with real links in `main.js`.
- - To allow multiple surprises per session, remove the `sessionStorage` check.
+- Tweak reward weights/copy in `main.js` under the `rewards` array.
+- Replace placeholder CTA URLs (e.g., perks) with real links in `main.js`.
+- To allow multiple surprises per session, remove the `sessionStorage` check.
 
 ## Features
 
