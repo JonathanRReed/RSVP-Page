@@ -26,6 +26,8 @@ body {
     radial-gradient(900px 500px at 100% 0%, rgba(255, 220, 203, 0.65), transparent 60%),
     var(--bg);
   color: var(--text);
+  position: relative;
+  overflow-x: clip;
 }
 
 .page {
@@ -233,6 +235,38 @@ input:valid {
   transform: scale(0.98);
   opacity: 0;
   animation: rewardIn 420ms cubic-bezier(.2,.7,.2,1) forwards;
+  position: relative;
+}
+
+/* Fancy gradient border (progressive) */
+@supports (mask-composite: exclude) or (-webkit-mask-composite: xor) {
+  .reward__card {
+    border: none;
+  }
+  .reward__card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 22px;
+    padding: 1px;
+    background: conic-gradient(
+      from 120deg,
+      var(--accent),
+      var(--accent-2),
+      #fff3e8,
+      #e6fff6,
+      var(--accent)
+    );
+    -webkit-mask: 
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    mask: 
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    pointer-events: none;
+  }
 }
 
 .reward__emoji { font-size: 2rem; margin-bottom: 8px; }
@@ -277,6 +311,50 @@ input:valid {
 .raffle__results ul { margin: 0; padding-left: 1.2rem; }
 .raffle__results li { padding: 4px 0; color: var(--text); }
 
+/* Scroll edge fade for long results (progressive) */
+@supports (mask-image: linear-gradient(black, transparent)) or (-webkit-mask-image: linear-gradient(black, transparent)) {
+  .raffle__results {
+    max-height: 280px;
+    overflow: auto;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+}
+
+/* Gradient text and underline accents */
+.campaign__title {
+  background: linear-gradient(135deg, var(--heading), #2f495e 60%, var(--heading));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.campaign__title::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 3px;
+  margin: 8px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+/* Logo subtle glow on hover */
+.brand__logo { position: relative; }
+.brand__logo::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 14px;
+  background: radial-gradient(24px 16px at 10% 10%, rgba(135,226,199,0.4), transparent),
+              radial-gradient(24px 16px at 90% 90%, rgba(255,205,183,0.4), transparent);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+.brand__logo:hover::after { opacity: 1; }
+
 /* Campaign settings */
 .campaign__settings {
   margin-top: 14px;
@@ -311,6 +389,47 @@ input:valid {
 
 @media (prefers-reduced-motion: no-preference) {
   body { animation: floatBackdrop 18s ease-in-out infinite; }
+}
+
+/* Layered gradient blobs for a richer hero background */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20vmax -20vmax auto -20vmax;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Spinning conic gradient aura */
+body::before {
+  height: 120vmax;
+  background: conic-gradient(from 0deg, rgba(135,226,199,0.14), rgba(255,205,183,0.14), rgba(255,243,232,0.10), rgba(230,255,246,0.10), rgba(135,226,199,0.14));
+  filter: blur(40px) saturate(1.05);
+  transform-origin: 50% 30%;
+}
+
+/* Drifting radial blobs */
+body::after {
+  height: 120vmax;
+  background:
+    radial-gradient(40vmax 35vmax at 20% 20%, rgba(135,226,199,0.28), transparent 60%),
+    radial-gradient(35vmax 32vmax at 80% 15%, rgba(255,205,183,0.28), transparent 60%),
+    radial-gradient(30vmax 28vmax at 60% 70%, rgba(255,243,232,0.22), transparent 60%),
+    radial-gradient(26vmax 24vmax at 15% 80%, rgba(230,255,246,0.22), transparent 60%);
+  filter: blur(22px);
+}
+
+@keyframes spinAura { to { transform: rotate(360deg); } }
+@keyframes driftBlobs {
+  0% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(1.5vmax, -1vmax, 0) scale(1.02); }
+  100% { transform: translate3d(0,0,0) scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body::before { animation: spinAura 120s linear infinite; }
+  body::after { animation: driftBlobs 24s ease-in-out infinite; }
 }
 
 /* 2) Card glassmorphism on capable browsers (keeps solid fallback) */
