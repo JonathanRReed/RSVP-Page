@@ -16,7 +16,7 @@
           <div class="brand">
             <div class="brand__logo" aria-hidden="true">noko</div>
           </div>
-          <h1 id="event-title" class="title">Try Noko IRL</h1>
+          <h1 id="event-title" class="title">Try Noko IRL <span class="title__emoji" aria-hidden="true">✨</span></h1>
           <p class="subtitle">A sparkling tasting event. Come sip our newest flavors and hang with the team. Limited spots — RSVP below.</p>
         </header>
 
@@ -52,5 +52,43 @@
         <a href="#" class="btn btn--ghost" role="button" aria-label="Close confirmation">Close</a>
       </div>
     </div>
+    
+    <!-- Campaign: Noko Surprise -->
+    <section class="campaign" aria-labelledby="campaign-title">
+      <div class="campaign__inner">
+        <h2 id="campaign-title" class="campaign__title">Noko Surprise <span aria-hidden="true">🎁</span></h2>
+        <p class="campaign__subtitle">Click once to get a light, fun reward. One surprise per session.</p>
+        <button id="nokoSurpriseBtn" class="btn btn--surprise" type="button" aria-controls="reward" aria-expanded="false">
+          Get my Noko Surprise ✨
+        </button>
+        <div id="announce" class="sr-only" aria-live="polite"></div>
+
+        <div id="reward" class="reward" hidden>
+          <div class="reward__card" tabindex="-1">
+            <div class="reward__emoji" aria-hidden="true">🎉</div>
+            <h3 class="reward__title">You unlocked a surprise!</h3>
+            <p class="reward__text">Mixing your sparkle…</p>
+            <a class="btn btn--ghost reward__cta" href="#" hidden>Learn more</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Raffle Drawer -->
+    <section class="raffle" aria-labelledby="raffle-title">
+      <div class="campaign__inner">
+        <h2 id="raffle-title" class="campaign__title">Raffle Drawer <span aria-hidden="true">🎟️</span></h2>
+        <p class="campaign__subtitle">Paste a few names (one per line), then draw winners.</p>
+        <textarea id="namesInput" class="raffle__input" rows="6" placeholder="e.g.\nAlex\nJordan\nRiley\nSam"></textarea>
+        <div class="raffle__actions">
+          <button id="drawBtn" class="btn" type="button">Draw Winners 🎟️</button>
+          <button id="resetBtn" class="btn btn--ghost" type="button">Reset 🔄</button>
+        </div>
+        <div id="raffleResults" class="raffle__results" tabindex="-1" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="main.js" defer></script>
   </body>
 </html>

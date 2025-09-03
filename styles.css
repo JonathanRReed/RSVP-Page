@@ -1,13 +1,17 @@
 /* Styles for Try Noko IRL landing page */
 :root {
-  --bg: #0e0f12;
-  --card: #12151a;
-  --text: #e8eaed;
-  --muted: #a2a7b0;
-  --accent: #7fe0c3; /* minty sparkle */
-  --accent-2: #7fcfe0;
-  --radius: 16px;
-  --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  /* Pastel brand palette */
+  --mint: #CFF7E6;
+  --peach: #FFDCCB;
+  --bg: #FAFBFB; /* fallback */
+  --card: #ffffff;
+  --text: #6b7280; /* light grey body */
+  --heading: #1f2937; /* strong contrast for headings */
+  --muted: #8c94a1;
+  --accent: #87E2C7; /* minty */
+  --accent-2: #FFCDB7; /* peach */
+  --radius: 18px;
+  --shadow: 0 12px 28px rgba(31, 41, 55, 0.08);
 }
 
 * { box-sizing: border-box; }
@@ -17,9 +21,10 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
-  background: radial-gradient(1000px 600px at 10% 10%, rgba(127, 224, 195, 0.08), transparent 60%),
-              radial-gradient(800px 500px at 90% 0%, rgba(127, 207, 224, 0.08), transparent 60%),
-              var(--bg);
+  background:
+    radial-gradient(1200px 600px at 10% 0%, rgba(207, 247, 230, 0.7), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(255, 220, 203, 0.65), transparent 60%),
+    var(--bg);
   color: var(--text);
 }
 
@@ -27,47 +32,48 @@ body {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: 48px 16px;
+  padding: 72px 20px; /* generous vertical spacing */
 }
 
 .card {
   width: 100%;
-  max-width: 720px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.0)) padding-box,
-              linear-gradient(180deg, rgba(127, 224, 195, 0.6), rgba(127, 207, 224, 0.25)) border-box,
-              var(--card);
-  border: 1px solid transparent;
+  max-width: 760px;
+  background: var(--card);
+  border: 1px solid rgba(31, 41, 55, 0.08);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 28px;
+  padding: 48px; /* more vertical spacing */
 }
 
-.card__header { margin-bottom: 24px; }
+.card__header { margin-bottom: 32px; }
 
 .brand { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 .brand__logo {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: #0b0e0f;
   font-weight: 800;
   text-transform: lowercase;
   letter-spacing: 0.5px;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
   display: inline-block;
 }
 
 .title {
-  margin: 0 0 8px;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 0 0 14px;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800; /* bold sans-serif */
+  color: var(--heading);
 }
+.title__emoji { margin-left: 6px; }
 
 .subtitle {
   margin: 0;
-  color: var(--muted);
-  line-height: 1.6;
+  color: var(--text);
+  line-height: 1.7;
 }
 
-.form { display: grid; gap: 16px; margin-top: 18px; }
+.form { display: grid; gap: 20px; margin-top: 26px; }
 
 .field { display: grid; gap: 6px; }
 .label { color: var(--muted); font-size: 0.95rem; }
@@ -77,27 +83,28 @@ body {
 input[type="text"],
 input[type="email"] {
   width: 100%;
-  padding: 14px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.03);
-  color: var(--text);
+  padding: 16px 16px;
+  border-radius: 14px; /* rounded corners */
+  border: 1px solid rgba(31, 41, 55, 0.12);
+  background: #fff;
+  color: var(--heading);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 6px 16px rgba(31, 41, 55, 0.06); /* soft shadow */
 }
 
 input::placeholder { color: #98a0aa; }
 
 input:focus {
-  border-color: rgba(127, 224, 195, 0.7);
-  box-shadow: 0 0 0 4px rgba(127, 224, 195, 0.18);
-  background: rgba(255,255,255,0.06);
+  border-color: rgba(135, 226, 199, 0.9);
+  box-shadow: 0 0 0 4px rgba(135, 226, 199, 0.25);
+  background: #fff;
 }
 
 /* Native validation feedback */
 input:invalid {
-  border-color: rgba(255, 102, 102, 0.8);
-  box-shadow: 0 0 0 4px rgba(255, 102, 102, 0.18);
+  border-color: rgba(255, 129, 129, 0.9);
+  box-shadow: 0 0 0 4px rgba(255, 129, 129, 0.18);
 }
 
 input:valid {
@@ -105,18 +112,18 @@ input:valid {
 }
 
 .btn {
-  margin-top: 4px;
+  margin-top: 8px;
   appearance: none;
   border: 0;
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-weight: 700;
+  padding: 16px 20px;
+  border-radius: 16px; /* rounded corners */
+  font-weight: 800;
   letter-spacing: 0.2px;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0b0e0f;
+  color: #1f2937;
   cursor: pointer;
   transition: transform 0.06s ease, filter 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 8px 18px rgba(127, 224, 195, 0.25);
+  box-shadow: 0 10px 22px rgba(255, 205, 183, 0.25), 0 10px 22px rgba(135, 226, 199, 0.18);
 }
 
 .btn:hover { filter: brightness(1.05); }
@@ -127,13 +134,13 @@ input:valid {
 }
 
 .fine-print {
-  margin: 14px 4px 0;
-  font-size: 0.85rem;
+  margin: 18px 4px 0;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
 @media (min-width: 760px) {
-  .card { padding: 40px; }
+  .card { padding: 56px; }
 }
 
 /* Modal (CSS-only via :target) */
@@ -152,9 +159,9 @@ input:valid {
 .modal__content {
   width: min(92vw, 560px);
   background: var(--card);
-  color: var(--text);
+  color: var(--heading);
   border-radius: var(--radius);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(31, 41, 55, 0.12);
   box-shadow: var(--shadow);
   padding: 28px;
 }
@@ -201,3 +208,59 @@ input:valid {
   white-space: nowrap;
   border: 0;
 }
+
+/* Campaign section */
+.campaign { padding: 64px 20px 96px; }
+.campaign__inner { max-width: 760px; margin: 0 auto; text-align: center; }
+.campaign__title { font-size: clamp(1.6rem, 3vw, 2rem); color: var(--heading); margin: 0 0 8px; }
+.campaign__subtitle { margin: 0 0 20px; color: var(--muted); }
+
+.btn--surprise {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #1f2937;
+}
+
+/* Reward reveal */
+.reward { margin-top: 22px; display: grid; place-items: center; }
+.reward__card {
+  background: var(--card);
+  border: 1px solid rgba(31, 41, 55, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 14px 36px rgba(31, 41, 55, 0.12);
+  padding: 28px 24px;
+  max-width: 620px;
+  outline: none;
+  transform: scale(0.98);
+  opacity: 0;
+  animation: rewardIn 420ms cubic-bezier(.2,.7,.2,1) forwards;
+}
+
+.reward__emoji { font-size: 2rem; margin-bottom: 8px; }
+.reward__title { margin: 0 0 6px; color: var(--heading); font-size: 1.25rem; font-weight: 800; }
+.reward__text { margin: 0 0 10px; color: var(--text); }
+.reward__cta { margin-top: 6px; }
+
+@keyframes rewardIn {
+  from { transform: scale(0.98) translateY(6px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reward__card { animation: none; opacity: 1; transform: none; }
+}
+
+/* Raffle styles */
+.raffle { padding: 0 20px 120px; }
+.raffle .campaign__inner { text-align: left; }
+.raffle__input {
+  width: 100%;
+  min-height: 140px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(31, 41, 55, 0.12);
+  box-shadow: 0 6px 16px rgba(31, 41, 55, 0.06);
+  font: inherit;
+  color: var(--heading);
+}
+.raffle__actions { display: flex; gap: 12px; margin-top: 12px; }
+.raffle__results { margin-top: 16px; padding: 16px; background: var(--card); border: 1px solid rgba(31, 41, 55, 0.12); border-radius: 14px; min-height: 40px; }
