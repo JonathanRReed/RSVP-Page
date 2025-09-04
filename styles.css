@@ -3,32 +3,20 @@
   /* Pastel brand palette */
   --mint: #CFF7E6;
   --peach: #FFDCCB;
-  --bg: #FAFBFB; /* fallback */
-  --card: #ffffff;
-  --text: #6b7280; /* light grey body */
-  --heading: #1f2937; /* strong contrast for headings */
-  --muted: #8c94a1;
-  --accent: #87E2C7; /* minty */
-  --accent-2: #FFCDB7; /* peach */
+  --bg: #0f0f23; /* Deep navy */
+  --card: #1a1a2e; /* Darker navy */
+  --text: #e0e0e0; /* Light gray */
+  --heading: #ffffff; /* White */
+  --muted: #a0a0a0; /* Muted gray */
+  --accent: #4ecdc4; /* Subtle teal/mint */
+  --accent-2: #ffa07a; /* Soft peach */
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow: rgba(0, 0, 0, 0.3);
   --radius: 18px;
-  --shadow: 0 12px 28px rgba(31, 41, 55, 0.08);
 }
 
 /* Hint native UI theme to browser */
-:root { color-scheme: light; }
-[data-theme="darkmint"] { color-scheme: dark; }
-
-/* Dark Mint theme */
-[data-theme="darkmint"] {
-  --bg: #0E1514;
-  --card: #0f1b1a;
-  --text: #a7b0b0;
-  --heading: #ebf4f2;
-  --muted: #8aa09e;
-  --accent: #6AD6BA;
-  --accent-2: #FFBDA6;
-  --shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
-}
+:root { color-scheme: dark; }
 
 * { box-sizing: border-box; }
 
@@ -38,10 +26,13 @@ body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   background:
-    radial-gradient(1200px 600px at 10% 0%, rgba(207, 247, 230, 0.7), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(255, 220, 203, 0.65), transparent 60%),
+    radial-gradient(1200px 600px at 10% 0%, rgba(78, 205, 196, 0.08), transparent 60%),
+    radial-gradient(800px 400px at 90% 20%, rgba(255, 160, 122, 0.06), transparent 60%),
     var(--bg);
   color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   position: relative;
   overflow-x: clip;
 }
@@ -53,6 +44,31 @@ body {
 /* Floating utility bar */
 .util { position: fixed; top: 14px; right: 14px; display: flex; gap: 8px; z-index: 998; }
 .util__btn { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-color: rgba(255,255,255,0.2); }
+
+/* Main nav (top-left) */
+.main-nav {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 998;
+}
+.main-nav a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+.main-nav a:hover { background: rgba(255,255,255,0.08); }
 
 .page {
   min-height: 100dvh;
@@ -129,8 +145,10 @@ input:focus {
   background: #fff;
 }
 
-/* Native validation feedback */
-input:invalid {
+/* Native validation feedback
+   Avoid showing red borders on initial load by requiring the field
+   to have user input (placeholder no longer shown). */
+input:invalid:not(:placeholder-shown) {
   border-color: rgba(255, 129, 129, 0.9);
   box-shadow: 0 0 0 4px rgba(255, 129, 129, 0.18);
 }
@@ -253,18 +271,37 @@ input:valid {
 /* Reward reveal */
 .reward { margin-top: 22px; display: grid; place-items: center; }
 .reward__card {
-  background: var(--card);
-  border: 1px solid rgba(31, 41, 55, 0.12);
-  border-radius: 20px;
+  /* Themed animated gradient background; defaults set below */
+  --r1: #87E2C7; /* mint */
+  --r2: #FFCDB7; /* peach */
+  --r3: #fff3e8; /* warm light */
+  --angle: 140deg;
+  background: conic-gradient(from var(--angle), var(--r3), var(--r2), var(--r1));
+  padding: 32px 24px;
+  max-width: 520px;
+  margin: 0 auto;
+  border-radius: 18px;
   box-shadow: 0 14px 36px rgba(31, 41, 55, 0.12);
-  padding: 28px 24px;
-  max-width: 620px;
   outline: none;
   transform: scale(0.98);
   opacity: 0;
   animation: rewardIn 420ms cubic-bezier(.2,.7,.2,1) forwards;
   position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 6px;
 }
+
+/* Keep text legible on bright gradients */
+.reward__card * { text-shadow: 0 2px 6px rgba(0,0,0,0.28); }
+
+/* Animate the conic gradient by animating a custom angle property */
+@property --angle { syntax: '<angle>'; initial-value: 140deg; inherits: false; }
+@media (prefers-reduced-motion: no-preference) {
+  .reward__card { animation: rewardIn 420ms cubic-bezier(.2,.7,.2,1) forwards, swirl 14s linear infinite; }
+}
+@keyframes swirl { to { --angle: 500deg; } }
 
 /* Fancy gradient border (progressive) */
 @supports (mask-composite: exclude) or (-webkit-mask-composite: xor) {
@@ -299,7 +336,14 @@ input:valid {
 
 .reward__emoji { font-size: 2rem; margin-bottom: 8px; }
 .reward__title { margin: 0 0 6px; color: var(--heading); font-size: 1.25rem; font-weight: 800; }
-.reward__text { margin: 0 0 10px; color: var(--text); }
+.reward__text { margin: 0 0 10px; color: var(--heading); opacity: 0.95; }
+.reward__title, .reward__text {
+  background: rgba(12, 14, 24, 0.28);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 6px 10px;
+  border-radius: 12px;
+}
+.reward__card .btn--ghost { color: #fff; border-color: rgba(255,255,255,0.42); background: rgba(255,255,255,0.12); }
 .reward__cta { margin-top: 6px; }
 
 @keyframes rewardIn {
@@ -309,6 +353,24 @@ input:valid {
 
 @media (prefers-reduced-motion: reduce) {
   .reward__card { animation: none; opacity: 1; transform: none; }
+}
+
+/* Reward theme variants (JS sets data-theme on the card) */
+.reward__card[data-theme="sample"] { --r1:#6AD6BA; --r2:#87E2C7; --r3:#e6fff6; }
+.reward__card[data-theme="early"] { --r1:#8fb5ff; --r2:#b3ccff; --r3:#e8f0ff; }
+.reward__card[data-theme="merch"] { --r1:#ffb199; --r2:#FFCDB7; --r3:#fff3e8; }
+.reward__card[data-theme="match"] { --r1:#FFDCCB; --r2:#FFCDB7; --r3:#ffeade; }
+.reward__card[data-theme="perk"] { --r1:#87E2C7; --r2:#FFCDB7; --r3:#fff3e8; }
+
+/* Subtle highlight sweep overlay */
+.reward__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(60% 80% at 20% 0%, rgba(255,255,255,0.22), transparent 60%),
+              radial-gradient(40% 60% at 100% 100%, rgba(0,0,0,0.08), transparent 60%);
+  pointer-events: none;
 }
 
 /* Raffle styles */
@@ -406,7 +468,113 @@ input:valid {
   accent-color: var(--accent);
 }
 
-/* --- Modern CSS Progressive Enhancements --- */
+/* Countdown Timer */
+.countdown {
+  margin: 16px 0;
+  text-align: center;
+  color: var(--text);
+}
+.countdown__label {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+.countdown__timer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.countdown__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 60px;
+  box-shadow: 0 4px 12px rgba(31, 41, 55, 0.1);
+}
+.countdown__item span:first-child {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+.countdown__unit {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .countdown__item span:first-child {
+    animation: pulse 2s ease-in-out infinite;
+  }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Floating Bubbles */
+.bubbles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(78, 205, 196, 0.1), rgba(255, 160, 122, 0.08));
+  opacity: 0.6;
+}
+.bubble--1 {
+  width: 80px;
+  height: 80px;
+  top: 10%;
+  left: 10%;
+  animation: float 20s ease-in-out infinite;
+}
+.bubble--2 {
+  width: 60px;
+  height: 60px;
+  top: 30%;
+  left: 70%;
+  animation: float 15s ease-in-out infinite reverse;
+}
+.bubble--3 {
+  width: 100px;
+  height: 100px;
+  top: 60%;
+  left: 20%;
+  animation: float 25s ease-in-out infinite;
+}
+.bubble--4 {
+  width: 40px;
+  height: 40px;
+  top: 80%;
+  left: 80%;
+  animation: float 18s ease-in-out infinite reverse;
+}
+.bubble--5 {
+  width: 70px;
+  height: 70px;
+  top: 40%;
+  left: 50%;
+  animation: float 22s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-10px) translateX(-10px); }
+  75% { transform: translateY(-30px) translateX(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bubble { animation: none; }
+}
 
 /* 1) Subtle animated background (respects reduced-motion) */
 @keyframes floatBackdrop {
@@ -460,13 +628,13 @@ body::after {
   body::after { animation: driftBlobs 24s ease-in-out infinite; }
 }
 
-/* 2) Card glassmorphism on capable browsers (keeps solid fallback) */
+/* 2) Card glassmorphism (dark, not white) on capable browsers */
 @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
   .card {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(10px) saturate(1.1);
-    -webkit-backdrop-filter: blur(10px) saturate(1.1);
-    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(12, 14, 24, 0.72);
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -486,9 +654,13 @@ body::after {
 
 /* 4) :has() validation highlight (progressive) */
 @supports selector(:has(*)) {
-  .field:has(input:invalid) .label { color: #b45309; }
-  .field:has(input:invalid) input { border-color: rgba(255, 129, 129, 0.9); box-shadow: 0 0 0 4px rgba(255, 129, 129, 0.18); }
+  .field:has(input:invalid:not(:placeholder-shown)) .label { color: #b45309; }
+  .field:has(input:invalid:not(:placeholder-shown)) input { border-color: rgba(255, 129, 129, 0.9); box-shadow: 0 0 0 4px rgba(255, 129, 129, 0.18); }
   .field:has(input:valid) .label { color: var(--muted); }
+  /* Keep two-column inputs aligned by reserving hint space on fields without help text */
+  @container (min-width: 620px) {
+    .form .field:not(:has(.help)) { padding-bottom: 22px; }
+  }
 }
 
 /* 5) Buttons: animated sheen on hover (respect motion) */

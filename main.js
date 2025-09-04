@@ -2,6 +2,19 @@
 // Accessibility: focus moves to the reward card; announcements via aria-live
 
 (function () {
+  const rsvpForm = document.getElementById('rsvpForm');
+  const sharePageBtn = document.getElementById('sharePageBtn');
+  const progressBar = document.getElementById('scrollProgress');
+
+  const shootConfetti = (colorsOverride) => {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (typeof confetti !== 'function') return;
+    const colors = colorsOverride || ['#87E2C7', '#FFCDB7', '#fff3e8', '#e6fff6'];
+    confetti({ particleCount: 60, spread: 65, origin: { y: 0.6 }, colors });
+    setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.2, y: 0.4 }, colors }), 120);
+    setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.8, y: 0.4 }, colors }), 200);
+  };
+
   const btn = document.getElementById('nokoSurpriseBtn');
   const rewardWrap = document.getElementById('reward');
   const rewardCard = rewardWrap?.querySelector('.reward__card');
@@ -13,9 +26,6 @@
   const tryAgainEl = document.getElementById('tryAgainToggle');
   const resetSurpriseBtn = document.getElementById('resetSurpriseBtn');
   const rewardShareBtn = document.getElementById('rewardShareBtn');
-  const themeToggle = document.getElementById('themeToggle');
-  const sharePageBtn = document.getElementById('sharePageBtn');
-  const progressBar = document.getElementById('scrollProgress');
 
   if (!btn || !rewardWrap || !rewardCard) return;
 
@@ -40,12 +50,7 @@
 
   const SESSION_KEY = 'noko-surprise-claimed';
   const TRY_AGAIN_KEY = 'noko-try-again';
-  const THEME_KEY = 'noko-theme';
 
-  const shootConfetti = (colorsOverride) => {
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (typeof confetti !== 'function') return;
-    const colors = colorsOverride || ['#87E2C7', '#FFCDB7', '#fff3e8', '#e6fff6'];
     confetti({ particleCount: 60, spread: 65, origin: { y: 0.6 }, colors });
     setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.2, y: 0.4 }, colors }), 120);
     setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.8, y: 0.4 }, colors }), 200);
@@ -77,6 +82,20 @@
       perk: ['#87E2C7', '#FFCDB7', '#fff3e8']
     };
     shootConfetti(colorMap[r.id] || undefined);
+
+    // Apply theme to the reward card and prep a share URL
+    try {
+      rewardCard.dataset.theme = r.id;
+      const [c1, c2, c3] = colorMap[r.id] || [];
+      if (c1 && c2 && c3) {
+        rewardCard.style.setProperty('--r1', c1);
+        rewardCard.style.setProperty('--r2', c2);
+        rewardCard.style.setProperty('--r3', c3);
+      }
+      const url = new URL(location.href);
+      url.searchParams.set('reward', r.id);
+      rewardCard.dataset.shareUrl = url.toString();
+    } catch {}
 
     // Analytics placeholder
     try { console.log('[analytics] reward_revealed', { id: r.id, title: r.title }); } catch {}
@@ -119,28 +138,6 @@
   });
 
   // ----------------------
-  // Theme toggle + persistence
-  // ----------------------
-  function applyTheme(theme) {
-    const root = document.documentElement;
-    if (theme === 'darkmint') {
-      root.setAttribute('data-theme', 'darkmint');
-      if (themeToggle) { themeToggle.setAttribute('aria-pressed', 'true'); themeToggle.textContent = 'Light ☀️'; }
-    } else {
-      root.removeAttribute('data-theme');
-      if (themeToggle) { themeToggle.setAttribute('aria-pressed', 'false'); themeToggle.textContent = 'Dark Mint 🌙'; }
-    }
-  }
-  const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
-  applyTheme(savedTheme);
-  themeToggle?.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme') === 'darkmint' ? 'darkmint' : 'light';
-    const next = current === 'darkmint' ? 'light' : 'darkmint';
-    localStorage.setItem(THEME_KEY, next);
-    applyTheme(next);
-  });
-
-  // ----------------------
   // Share Page
   // ----------------------
   sharePageBtn?.addEventListener('click', async () => {
@@ -168,6 +165,43 @@
   window.addEventListener('scroll', updateScrollProgress, { passive: true });
   window.addEventListener('resize', updateScrollProgress);
 
+  // ----------------------
+  // RSVP mock submit (plug & play)
+  // - Validates with native HTML5
+  // - Stores entries in localStorage under `noko-rsvp-entries`
+  // - Shows the #thanks modal and fires confetti
+  // ----------------------
+  rsvpForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!rsvpForm.checkValidity()) {
+      rsvpForm.reportValidity();
+      return;
+    }
+    const name = (rsvpForm.querySelector('#name')?.value || '').trim();
+    const email = (rsvpForm.querySelector('#email')?.value || '').trim();
+    const consent = !!rsvpForm.querySelector('#consent')?.checked;
+
+    try {
+      const key = 'noko-rsvp-entries';
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.push({ name, email, consent, at: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(list));
+    } catch {}
+
+    location.hash = '#thanks';
+    shootConfetti();
+  });
+
+  // If a reward is specified in the URL, reveal it on load (deep link)
+  try {
+    const url = new URL(location.href);
+    const forced = url.searchParams.get('reward');
+    if (forced) {
+      const r = rewards.find(x => x.id === forced);
+      if (r) reveal(r);
+    }
+  } catch {}
+
   // Persist Try Again toggle (initialize and save)
   if (tryAgainEl) {
     const saved = localStorage.getItem(TRY_AGAIN_KEY);
@@ -179,7 +213,8 @@
 
   // Share reward copy
   rewardShareBtn?.addEventListener('click', async () => {
-    const text = `I just unlocked a Noko Surprise: ${rewardTitle.textContent} ${rewardEmoji.textContent} — ${rewardText.textContent}`;
+    const shareUrl = rewardCard?.dataset?.shareUrl || location.href;
+    const text = `I just unlocked a Noko Surprise: ${rewardTitle.textContent} ${rewardEmoji.textContent} — ${rewardText.textContent}\n${shareUrl}`;
     try {
       await navigator.clipboard.writeText(text);
       if (announce) announce.textContent = 'Copied reward to clipboard!';
@@ -196,6 +231,29 @@
     if (announce) announce.textContent = '';
     btn.focus();
   });
+
+  // Tilt interaction on reward card (motion-safe)
+  (function enableTilt() {
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!rewardCard || prefersReduced) return;
+    const maxTilt = 6; // degrees
+    function onMove(e) {
+      const rect = rewardCard.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      const rx = (0.5 - y) * (maxTilt * 2);
+      const ry = (x - 0.5) * (maxTilt * 2);
+      rewardCard.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+    }
+    function reset() {
+      rewardCard.style.transition = 'transform 220ms ease';
+      rewardCard.style.transform = 'none';
+      setTimeout(() => (rewardCard.style.transition = ''), 240);
+    }
+    rewardCard.addEventListener('mouseenter', () => (rewardCard.style.willChange = 'transform'));
+    rewardCard.addEventListener('mousemove', onMove);
+    rewardCard.addEventListener('mouseleave', reset);
+  })();
 
   // ----------------------
   // Raffle Drawer
@@ -309,4 +367,41 @@
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
   });
+  // ----------------------
+  // Countdown Timer
+  // ----------------------
+  const countdownEl = document.getElementById('countdown');
+  const daysEl = document.getElementById('days');
+  const hoursEl = document.getElementById('hours');
+  const minutesEl = document.getElementById('minutes');
+  const secondsEl = document.getElementById('seconds');
+
+  if (countdownEl && daysEl && hoursEl && minutesEl && secondsEl) {
+    // Set event date (demo: October 4, 2025 - adjust as needed)
+    const eventDate = new Date('2025-10-04T00:00:00').getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = eventDate - now;
+
+      if (distance > 0) {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        daysEl.textContent = days.toString().padStart(2, '0');
+        hoursEl.textContent = hours.toString().padStart(2, '0');
+        minutesEl.textContent = minutes.toString().padStart(2, '0');
+        secondsEl.textContent = seconds.toString().padStart(2, '0');
+      } else {
+        // Event has started or passed
+        countdownEl.innerHTML = '<div class="countdown__label">Event is Live!</div>';
+      }
+    }
+
+    updateCountdown(); // Initial call
+    setInterval(updateCountdown, 1000); // Update every second
+  }
+
 })();
