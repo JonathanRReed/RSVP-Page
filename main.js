@@ -9,7 +9,7 @@
   const shootConfetti = (colorsOverride) => {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (typeof confetti !== 'function') return;
-    const colors = colorsOverride || ['#87E2C7', '#FFCDB7', '#fff3e8', '#e6fff6'];
+    const colors = colorsOverride || ['#4ecdc4', '#ffa07a', '#e0e0e0', '#1a1a2e'];
     confetti({ particleCount: 60, spread: 65, origin: { y: 0.6 }, colors });
     setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.2, y: 0.4 }, colors }), 120);
     setTimeout(() => confetti({ particleCount: 40, spread: 80, origin: { x: 0.8, y: 0.4 }, colors }), 200);
@@ -197,8 +197,7 @@
     const url = new URL(location.href);
     const forced = url.searchParams.get('reward');
     if (forced) {
-      const r = rewards.find(x => x.id === forced);
-      if (r) reveal(r);
+      // Removed since rewards are gone
     }
   } catch {}
 
