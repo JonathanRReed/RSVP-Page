@@ -133,7 +133,7 @@ input[type="email"] {
   background: rgba(255,255,255,0.06); /* dark input on dark UI */
   color: var(--text);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.2s ease;
   box-shadow: 0 6px 16px rgba(31, 41, 55, 0.06); /* soft shadow */
 }
 
@@ -178,12 +178,15 @@ input:valid {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: #1f2937;
   cursor: pointer;
-  transition: transform 0.06s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 10px 22px rgba(255, 205, 183, 0.25), 0 10px 22px rgba(135, 226, 199, 0.18);
 }
 
-.btn:hover { filter: brightness(1.05); }
-.btn:active { transform: translateY(1px); }
+.btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px) scale(1.02);
+}
+.btn:active { transform: translateY(1px) scale(1); }
 .btn:focus-visible {
   outline: none;
   box-shadow: 0 0 0 4px rgba(127, 224, 195, 0.28);
@@ -664,13 +667,29 @@ body::after {
 
 /* 4) :has() validation highlight (progressive) */
 @supports selector(:has(*)) {
-  .field:has(input:invalid:not(:placeholder-shown)) .label { color: #b45309; }
+  .field:has(input:invalid:not(:placeholder-shown)) .label { color: #ff8181; }
   .field:has(input:invalid:not(:placeholder-shown)) input { border-color: rgba(255, 129, 129, 0.9); box-shadow: 0 0 0 4px rgba(255, 129, 129, 0.18); }
   .field:has(input:valid) .label { color: var(--muted); }
   /* Keep two-column inputs aligned by reserving hint space on fields without help text */
   @container (min-width: 620px) {
     .form .field:not(:has(.help)) { padding-bottom: 22px; }
   }
+}
+
+/* Shake animation for invalid form submission */
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-3px); }
+  40%, 60% { transform: translateX(3px); }
+}
+
+.field.field--invalid input {
+  animation: shake 0.7s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field.field--invalid input { animation: none; }
 }
 
 /* 5) Buttons: animated sheen on hover (respect motion) */

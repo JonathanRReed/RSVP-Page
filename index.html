@@ -79,6 +79,39 @@
 
         <p class="fine-print">By RSVPing you agree to receive a confirmation email. We’ll never share your info.</p>
       </section>
+
+      <!-- Noko Surprise -->
+      <section class="campaign" aria-labelledby="campaign-title">
+        <div class="campaign__inner">
+          <h2 id="campaign-title" class="campaign__title">Noko Surprise</h2>
+          <p class="campaign__subtitle">RSVP'd? Click below to unlock a playful, Noko-themed surprise!</p>
+          <button id="surpriseBtn" class="btn btn--surprise" type="button" aria-live="polite">Unlock Surprise ✨</button>
+          <div id="reward" class="reward" aria-live="assertive"></div>
+        </div>
+      </section>
+
+      <!-- Raffle Drawer -->
+      <section class="raffle" aria-labelledby="raffle-title">
+        <div class="campaign__inner">
+          <h2 id="raffle-title" class="campaign__title">Raffle Drawer</h2>
+          <p class="campaign__subtitle">Paste your list of attendees to draw winners. Fun and fair.</p>
+          <div class="raffle__controls">
+            <textarea id="raffleEntries" class="raffle__input" placeholder="Paste names, one per line..."></textarea>
+          </div>
+          <div class="raffle__actions">
+            <label for="winnerCount" class="label">Number of winners:</label>
+            <input id="winnerCount" class="raffle__count" type="number" value="1" min="1" />
+            <button id="drawBtn" class="btn" type="button">Draw Winners</button>
+            <div class="campaign__settings">
+              <label class="toggle">
+                <input id="removeWinner" type="checkbox" checked />
+                Remove winner from list
+              </label>
+            </div>
+          </div>
+          <div id="raffleResults" class="raffle__results" aria-live="polite"></div>
+        </div>
+      </section>
     </main>
     
     <!-- CSS-only confirmation modal shown when URL hash is #thanks -->
