@@ -70,4 +70,6 @@ Developed as part of a college class attended at University of Texas Dallas, thi
 
 ## License
 
-This project is part of a college class assignment and is available under the MIT License.
+This project is part of a college class assignment. The source code is
+available under MIT; event and brand names are excluded. See
+[`LICENSE`](./LICENSE) and [`NOTICE.md`](./NOTICE.md).
