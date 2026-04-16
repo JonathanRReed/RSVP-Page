@@ -1,5 +1,7 @@
 # RSVP Page for Noko IRL Event
 
+This is a demo.
+
 This is a college class project for a web development course, featuring a dark-mode RSVP page for the Noko IRL tasting event. The page includes an RSVP form, countdown timer, share functionality, and animations.
 
 ## Project Overview
